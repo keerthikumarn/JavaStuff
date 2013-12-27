@@ -4,7 +4,7 @@ public class FactoryPatternTest {
 
 	public static void main(String[] args) {
 		PetAnimalFactory petFactory = new PetAnimalFactory();
-		PetAnimal pet = petFactory.getPetAnimal("quack");
+		PetAnimal pet = petFactory.getPetAnimal("bark");
 		System.out.println(pet.makeNoise());
 	}
 
