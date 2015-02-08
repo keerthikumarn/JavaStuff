@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jms="http://www.springframework.org/schema/jms"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:mockito="http://www.mockito.org/spring/mockito"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/jms
+  http://www.springframework.org/schema/jms/spring-jms.xsd
+  http://activemq.apache.org/schema/core
+  http://activemq.apache.org/schema/core/activemq-core.xsd
+  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+  http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd">
+
+	<aop:aspectj-autoproxy/>
+
+  <!-- Scan extra services  -->
+  <context:annotation-config />
+  <context:component-scan base-package="com.springjetty.integration.configuration"/>
+
+  <!-- Load all other Spring context.xml -->
+  <!-- <import resource="classpath*:/META-INF/spring/context.xml"/> -->
+
+  <!-- Init H2datasource -->
+  <!-- <import resource="h2-datasource-context.xml"/> -->
+
+  <!-- Load web context -->
+  <import resource="classpath*:/META-INF/spring/rest-context.xml"/>
+
+  <!-- == JMS == -->
+  <jms:listener-container connection-factory="connectionFactory" transaction-manager="jmsTransactionManager" acknowledge="transacted" destination-type="topic" >
+    <jms:listener destination="${apt.rm.jms.topic.ui}" ref="asyncMessageService" />
+    
+  </jms:listener-container>
+  
+  <jms:listener-container connection-factory="connectionFactory" transaction-manager="jmsTransactionManager" acknowledge="transacted" destination-type="queue" >
+    <jms:listener destination="${apt.rm.jms.queue.fds}" ref="asyncMessageService" />
+  </jms:listener-container>
+
+
+  <!-- Post processing => replace some beans with mockups -->
+  <mockito:mock id="visitTimerJob" class="com.amadeus.apt.rm.modules.scheduler.impl.jgroup.JGroupsTimerConfigurer" />
+  <mockito:mock id="cancelledTimerJob" class="com.amadeus.apt.rm.modules.scheduler.impl.jgroup.JGroupsTimerConfigurer" />
+
+</beans>

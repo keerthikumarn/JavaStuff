@@ -1,0 +1,40 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+  <!-- H2 test datasource -->
+  <bean id="_h2dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="org.h2.Driver" />
+    <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MVCC=true" />
+  </bean>
+  
+  <!-- provides a H2 Web console to look into the db if necessary -->
+  <!-- <bean id="org.h2.tools.Server-WebServer" class="org.h2.tools.Server" 
+    factory-method="createWebServer" depends-on="_h2dataSource" 
+    init-method="start" lazy-init="false">
+    <constructor-arg value="-web,-webPort,11111" />
+  </bean> -->
+  
+  <!-- 
+    Use transaction-aware datasource proxy.
+    Because we use the same dataSource for all tests (deploy one only)
+    But we want data to be rolled back between 2 tests.
+    
+    This data source will replace the standard JNDI "dataSource", thanks to the SetH2DataSourcePostProcessor 
+  -->
+  <bean id="h2DataSource" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+     <constructor-arg ref="_h2dataSource"/>
+ </bean>
+
+  <!-- DB Unit in the way -->
+  <bean name="databaseTester" class="org.dbunit.DataSourceDatabaseTester">
+      <constructor-arg ref="h2DataSource" />
+  </bean>
+ 
+</beans>

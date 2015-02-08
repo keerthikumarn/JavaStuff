@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Students>
+    <Student>
+        <name>Keerthi Kumar N</name>
+        <regNo>3014</regNo>
+        <course>MCA</course>
+    </Student>
+    <Student>
+        <name>Gautam A P</name>
+        <regNo>3010</regNo>
+        <course>MCA</course>
+    </Student>
+    <Student>
+        <name>Shiva Kumar N</name>
+        <regNo>4074</regNo>
+        <course>BCom</course>
+    </Student>
+</Students>
